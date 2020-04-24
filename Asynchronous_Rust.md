@@ -18,7 +18,7 @@ So **asynchronous programming** lets us run multiple of these IO-bound computati
 
 The value returned by **async fn** is a **Future**. For anything to happen, the **Future** needs to be run on an executor.
 ## Example:
-‘’’
+```
 use futures::executor::block_on;
 
 async fn hello_world() {
@@ -29,4 +29,4 @@ fn main() {
     let future = hello_world(); // Nothing is printed
     block_on(future); // `future` is run and "hello, world!" is printed
 }
-‘’’
+```
