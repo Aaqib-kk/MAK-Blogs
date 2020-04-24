@@ -30,3 +30,44 @@ fn main() {
     block_on(future); // `future` is run and "hello, world!" is printed
 }
 ```
+Inside an **async fn**, you can use **.await** to wait for the completion of another type that implements the **Future trait**, such as the output of another **async fn**. Unlike **block_on, .await** does not block the current thread, but instead asynchronously waits for the future to complete, allowing other tasks to run if the future is currently unable to make progress.
+Lets make an example of learning, singing and dancing. We can sing and dance at a same time but we can not learn and sing at a same time. 
+## Example
+``` 
+use futures::executor::block_on;
+use std::thread;
+use std::time::Duration;
+
+async fn learn_song() -> String {
+thread::sleep(Duration::from_secs(2));
+"Love me like you do".to_string()
+}
+
+async fn sing_song(song:String) {
+thread::sleep(Duration::from_secs(2));
+println!("{}", song);
+}
+async fn dance() {
+println!(" Lets dance");
+}
+async fn learn_and_sing () {
+let song = learn_song().await;
+sing_song(song).await;
+}
+
+async fn audition () {
+let f1 = learn_and_sing();
+let f2 = dance();
+futures::join!(f1, f2);
+}
+
+fn main () {
+block_on(audition());
+} 
+```
+
+In this example, learning the song must happen before singing the song, but both learning and singing can happen at the same time as dancing. If we used **block_on(learn_song())** rather than **learn_song().await** in **learn_and_sing**, the thread wouldn't be able to do anything else while **learn_song** was running. This would make it impossible to dance at the same time. By **.await**-ing the **learn_song** future, we allow other tasks to take over the current thread if **learn_song** is blocked. This makes it possible to run multiple futures to completion concurrently on the same thread.
+
+# Conclusion
+
+It's important to remember that traditional threaded applications can be quite effective, and that Rust's small memory footprint and predictability mean that you can get far without ever using **async**. The increased complexity of the **asynchronous programming** model isn't always worth it, and it's important to consider whether your application would be better served by using a simpler threaded model.
