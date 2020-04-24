@@ -17,3 +17,16 @@ So **asynchronous programming** lets us run multiple of these IO-bound computati
 **Async/.await** is Rust’s built-in tool for writing asynchronous function that looks like synchronous code. async transform a block of code into a state machine that implements a trait called **Future**. Whereas calling a blocking function in a synchronous method would block the whole thread, blocked **Futures** will yield control of the thread, allowing other **Futures** to run.
 
 The value returned by **async fn** is a **Future**. For anything to happen, the **Future** needs to be run on an executor.
+## Example:
+‘’’
+use futures::executor::block_on;
+
+async fn hello_world() {
+    println!("hello, world!");
+}
+
+fn main() {
+    let future = hello_world(); // Nothing is printed
+    block_on(future); // `future` is run and "hello, world!" is printed
+}
+‘’’
